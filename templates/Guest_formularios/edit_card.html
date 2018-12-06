@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block javascript %}
+<script src="{% static 'js/guestRegisterUserJs.js' %}"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+	<form method="POST" action="." enctype="multipart/form-data">{% csrf_token %}
+  <table align="center" width="00" border="0">
+  <tbody>
+  	<div id="mensajeError">
+  	</div>
+    <tr>
+      <td><h3 class="panel-title" align="center">Modificar Tarjeta</h3></td>
+    </tr>
+    <tr>
+      <td><div class="row ">
+              <div class="col-md-12">
+                  {{ form_pagos.pagos_num_tarjeta }}
+              </div>
+          </div>
+							<div class="row ">
+              <div class="col-md-3 col-sm-3 col-xs-3">
+                  <span class="help-block text-muted small-font" required>Mes</span>
+                  <input id="mm" type="text" class="form-control" placeholder="MM" maxlength="2" />
+              </div>
+         <div class="col-md-3 col-sm-3 col-xs-3">
+                  <span class="help-block text-muted small-font" required>Año</span>
+                  <input id="yy" type="text" class="form-control" placeholder="AA" maxlength="2"/>
+              </div>
+        <div class="col-md-3 col-sm-3 col-xs-3">
+                  <span class="help-block text-muted small-font" >CVV</span>
+                  {{ form_pagos.pagos_codigo_seguridad }}
+              </div>
+					
+         <div class="col-md-3 col-sm-3 col-xs-3" align="middle">
+			 <div>
+				  
+			 </div>
+<img src="{% static 'images/ccv.png' %}" class="img-rounded" height="40"/>
+         </div>
+          </div>
+							<div class="row ">
+              <div class="col-md-12 pad-adjust">
+                  {{ form_pagos.pagos_nombre_propietario }}
+              </div>
+          </div></td>
+    </tr>
+    <tr>
+      <td><div class="row">
+                  
+                  <div class="col-xs-6 col-sm-6 col-md-6">
+                    <div class="form-group">
+                     <input id="guardarCard" style="background: #54452" type="button" value="Guardar" class="btn btn-info btn-block">
+                    </div>
+                  </div>
+                  
+                  <div class="col-xs-6 col-sm-6 col-md-6">
+                    <div class="form-group">
+                      <input id="cancelCard" style="background: #54452" type="button" value="Cancelar" class="btn btn-info btn-block">
+                    </div>
+                  </div>
+
+  </div></td>
+    </tr>
+    
+  </tbody>
+</table>
+
+      </div>
+      </form>  
+    </div>
+{% endblock %}

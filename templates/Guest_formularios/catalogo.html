@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div id="i5c3" class="container" align="center">
+			<div class="col-xs-12 col-sm-12">
+		<div class="col-xs-6" style="background: rgba(255, 255, 255, 0.5);">
+		<form role="form">
+    {% for fotosCasa in casas %}
+	<div class="row">
+			    				
+	  <div class="col-xs-6 col-sm-6 col-md-6 col-lg-12">
+									<div class="form-group">	
+		                            <img src="{{ fotosCasa.adjunto_archivo.url }}" height="300px" width="300px" />
+									</div>
+									<a style="color: #FFFFFF" href="/guest/house/{{ fotosCasa.id_residencias.id }}/">{{ fotosCasa.id_residencias.residencia_nombre }}</a>
+			    				</div>
+								
+    </div>
+    {% endfor %}
+	</div>
+	</div>
+			
+			</div>
+{% endblock %}

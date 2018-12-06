@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block javascript %}
+<script src="{% static 'js/guestSearchHouseJs.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div id="i5c3" class="container"> 
+  <div class="row">
+	  
+    <div class="col-lg-5" style="background: rgba(255, 255, 255, 0.5);">
+      <form role="form">
+    <h2 style="color: #2B2B2B">
+		  Reserva el lugar ideal para alojarte
+		  </h2>
+			    			<div class="row">
+			    				
+			    				<div class="col-xs-6 col-sm-6 col-md-6 col-lg-12">
+			    					<div class="form-group">
+			                <input type="search" name="search" id="search" class="form-control input-sm" placeholder="Donde">
+			    					</div>
+			    				</div>
+		  </div>
+			    				
+			    				
+		  <div class="col-xs-6 col-sm-6 col-md-6 col-lg-12">
+			    				<button id="buscarCasa" type="button" class="btn btn-sm" style="background: #E16668; color: #FFFFFF; width: 135px;">Buscar</button>
+			    			
+		  </div>
+		  <div>
+			   
+			  
+		  </div>
+    
+</div>	
+	<div class="col-xs-6 col-sm-6">
+		<div class="col-xs-6" style="background: rgba(255, 255, 255, 0.5);">
+		<form role="form">
+		<h2 style="color: #2B2B2B">
+			  Mejores resultados
+		</h2>
+		<div class="row">	    				
+		  <div class="col-xs-6 col-sm-6 col-md-6 col-lg-12" id="divBusqueda">
+			</div>
+									
+		</div>		
+		</div>
+		
+	</div>
+    </div>	
+  </div>
+{% endblock %}

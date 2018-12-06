@@ -1,0 +1,21 @@
+{% load static %}
+<header class="header3"><div id="imahj" class="container"><div data-columns="1" data-gjs="navbar" id="i3ch8" class="row"><div data-column="1" id="ikpx6" class="cell"><a href="{% url 'inicio' %}" id="iqj7y"> <img src="{% static 'images/GuestIncCompletoBlanco.png' %}" width="150"></img> </a><div id="iy7hy" class="burger"><div class="burger-line"></div><div class="burger-line"></div><div class="burger-line"></div></div></div><div data-column="1" id="iir1r" class="cell"><div data-gjs="navbar-items" class="menu-container"><nav data-gjs="navs" class="menu">
+	<a href="{% url 'inicio' %}" class="menu-link">Home</a>
+	<a href="{% url 'Guestinc_Registros:catalogo' %}" class="menu-link">Catalogo</a>
+	<a href="{% url 'Guestinc_Registros:ayuda' %}" class="menu-link">Ayuda</a>
+	<a href="{% url 'Guestinc_Registros:buscar' %}" class="menu-link">Buscar</a>
+	{% if request.user.is_authenticated %}
+		<a href="{% url 'Guestinc_Registros:user' pk=user.pk %}" class="menu-link">Perfil {{ user.first_name|title }} </a>
+	{% endif %}
+	{% if not request.user.is_authenticated %}
+		<a href="{% url 'Guestinc_Registros:login' %}" class="menu-link">Iniciar Sesión/Registrarse</a>
+	{% endif %}
+	{% if request.user.is_authenticated %}
+		<a href="#" class="menu-link btnCerrarSesion">Cerrar Sesión </a></nav>
+	{% endif %}
+	{% if request.user.is_authenticated %}
+          <nav><button id="registrarCasaNew" name="{{ user.id }}" type="button" class="btn btn-sm" style="background: #D85B5D; color: #FFFFFF;">Resgistra una casa</button></nav>
+    {% endif %}
+        </div></div></div></div></header>
+        <div>   </div>
+	

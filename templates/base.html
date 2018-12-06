@@ -1,0 +1,34 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+	{% include "head_css.html" %}
+	{% block javascript %}
+	{% endblock %}
+</head>
+<body>
+	<style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+    </style>
+    {% block addStyle %}
+    {% endblock %}
+    <body>
+    	<section id="irju">
+	    	{% include "menu.html" %}
+	    	{% block content %}
+			{% endblock %}
+		</section>
+		{% block content_down %}
+		{% endblock %}
+		{% block footer %}
+		{% endblock %}
+		{% include "footer_css.html" %}
+    </body>
+    {% include "down_script.html" %}
+</body>
+{% include "down_out_script.html" %}
+</html>

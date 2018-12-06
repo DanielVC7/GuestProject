@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block javascript %}
+<script src="{% static 'js/guestLoginJs.js' %}"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+{% endblock %}
+
+{% block content %}
+<div id="i5c3" class="container"><div id="mensajeError" ></div>
+  <div class="row"> <table width="300" height="200" border="0" align="center">
+    <tbody>
+      <tr>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><h3>Inicia Sesion</h3></td>
+      </tr>
+  	  <div></div>
+      <tr>
+  	  <td>
+          {{ form_login.username }}</td>
+      </tr>
+      <tr>
+        <td >
+          {{ form_login.password }}</td>
+      </tr>
+      <tr>
+        <td><button id="submit" type="button" class="btn btn-sm" style="background: #D85B5D; color: #FFFFFF; width: 300px;">Inicia sesión</button></td>
+      </tr>
+  	  <tr>
+        <td>¿No tienes una cuenta? <a href="{% url 'Guestinc_Registros:createUser' %}" style="color: #108A8E"><strong>Regístrate</strong></a></td>
+      </tr>
+  	  <tr>
+        <td> <a href="{% url 'Guestinc_Registros:recoveryPassword' %}" style="color: #D85B5D"> Olvide mi contraseña </a></td>
+      </tr>
+    </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
