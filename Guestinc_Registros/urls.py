@@ -16,6 +16,7 @@ urlpatterns = [
 	path('recoveryUser/send',recoveryUserSendEmail),
 	path('house/<int:pk>/',house),
 	path('cardUser/create',createCard),
+	path('reserva/<int:pk>/',reserva),
 
 	#AJAX
 	path('username/ajax',usernameAjax),
@@ -30,4 +31,6 @@ urlpatterns = [
 	path('pictureHouseAjax/ajax',pictureHouseAjax),
 	path('searchHouseAjax/ajax',searchHouseAjax),
 	path('reservaHouseAjax/ajax',reservaCasaAjax),
+	path('pagoAjax/ajax',pagoAjax),
+	path('cancelarPagoAjax/ajax',cancelarPagoAjax),
 ]

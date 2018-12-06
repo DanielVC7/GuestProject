@@ -61,9 +61,7 @@ class Guest_reserva(models.Model):
 	reserva_fecha_final = models.DateField(auto_now_add=False,auto_now=False)
 	reserva_dias = models.IntegerField()
 	reserva_num_huespedes = models.IntegerField()
-	reserva_total_dias = models.IntegerField()
 	reserva_total_pago = models.IntegerField()
-	reserva_dias = models.IntegerField()
 	reserva_telefono = models.CharField(max_length=12,null=True)
 	#Metodos
 	def __unicode__(self):

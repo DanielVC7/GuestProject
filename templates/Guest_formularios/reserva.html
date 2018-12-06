@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block javascript %}
+<script src="{% static 'js/guestPagoJs.js' %}"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <table align="center" width="700" border="0">
+  <tbody>
+    <tr>
+      <td><h3 class="panel-title" align="center">Proceso de pago</h3></td>
+    </tr>
+    <tr>
+      <td><div>
+		  <div class="panel-body">
+		  	<div id="mensajeError"></div>
+			    		<form role="form">
+			    			<div class="row">
+			    				{% for datosReserva in reservas %}
+			    				<input type="hidden" id="idRecidencia" value="{{ datosReserva.pk }}">
+			    				{% endfor %}
+			    				<div class="col-xs-6 col-sm-6 col-md-6">
+			    					<div class="form-group">
+			               			<h3>Tarjetas</h3>
+			               			{% for datoTarjeta in tarjetas %}
+										<div><label>Num. Tarjeta: {{ datoTarjeta.pagos_num_tarjeta }}&nbsp;&nbsp;</label><input type="radio"></div>		
+			               			{% endfor %}
+			    					</div>
+			    				</div>
+			    				
+			    				<div class="col-xs-6 col-sm-6 col-md-6">
+			    					<div class="form-group">
+			    						<div>
+		  <h2 align="center"> Datos de reserva</h2>
+		  </div>
+		  {% for datosReserva in reservas %}
+		  <div class="col-xs-6 col-sm-6 col-md-6 col-lg-12">
+			    					<div class="form-group">
+										<label> Costo por noche</label>
+			    						<input value="{{ datosReserva.residencia_costo_noche }}" type="text"  align="center" class="form-control input-sm" disabled>
+			    					</div>
+			    				</div>
+		   <div class="col-xs-6 col-sm-6 col-md-6 col-lg-12">
+			    					<div class="form-group">
+										<label > Dias de instacia</label>
+			    						<input id="diasInstancia" value="{{ datosReserva.id_reserva.reserva_dias }}" type="text" align="center" class="form-control input-sm" disabled>
+			    					</div>
+			    				</div>
+		  <div class="col-xs-6 col-sm-6 col-md-6 col-lg-12">
+			    					<div class="form-group">
+										<label> Total de instancia</label>
+			    						<input id="totalInstacia" value="" type="text"  align="center" class="form-control input-sm" disabled>
+			    					</div>
+			    				</div>
+		  <div class="col-xs-6 col-sm-6 col-md-6 col-lg-12">
+			    					<div class="form-group">
+										<label> Descuento</label>
+			    						<input id="descuento1" value="{{ datosReserva.id_descuento.descuento_porcentaje }}" type="text" align="center" class="form-control input-sm" disabled>
+			    					</div>
+			    				</div>
+		  <div class="col-xs-6 col-sm-6 col-md-6 col-lg-12">
+			    					<div class="form-group">
+										<label> I.V.A </label>
+			    						<input value="16%" type="text" align="center" class="form-control input-sm" disabled>
+			    					</div>
+			    				</div>
+		  <div class="col-xs-6 col-sm-6 col-md-6 col-lg-12">
+			    					<div class="form-group">
+										<label> Total</label>
+			    						<input id="total1" value="{{ datosReserva.id_reserva.reserva_total_pago }}" type="text" align="center" class="form-control input-sm" disabled>
+			    					</div>
+			    				</div>
+			{% endfor %}
+			    					</div>
+			    				</div>	
+			    			</td>
+    </tr>
+    <tr>
+      <td><div>
+		  <div class="panel-body">
+			    		<form role="form">
+			    			<div class="row">
+			    			
+			    				<div class="col-xs-6 col-sm-6 col-md-6">
+			    					<div class="form-group">
+										<div>
+										<h3 align="center">Descuentos</h3>
+										</div>
+			    						<input id="descuentoCodigo" type="text" class="form-control input-sm" placeholder="Codigo de descuento">
+			    					</div>
+									<div class="form-group">
+										{% for datosReserva in reservas %}
+			               <input name="{{ datosReserva.id_reserva.pk }}" id="descuenAplicar" style="background: #54452" type="button" value="Aplicar" class="btn btn-info btn-block" />
+			               				{% endfor %}
+			    					</div>
+			    				</div>
+			    				
+			    				<div class="col-xs-6 col-sm-6 col-md-6">
+			    					<div class="form-group">
+									<div>
+		  <h2 align="center"> Datos del cargo</h2>
+		  </div>
+		  {% for datosReserva in reservas %}
+		  <div class="col-xs-6 col-sm-6 col-md-6 col-lg-12">
+			    					<div class="form-group">
+										<label> Casa </label>
+			    						<input value="{{ datosReserva.residencia_nombre }}" type="text"  align="center" class="form-control input-sm" disabled>
+			    					</div>
+			    				</div>
+		   <div class="col-xs-6 col-sm-6 col-md-6 col-lg-12">
+			    					<div class="form-group">
+										<label> Fecha de llegada</label>
+			    						<input value="{{ datosReserva.id_reserva.reserva_fecha_inicio|date:'d/m/Y' }}" type="text" align="center" class="form-control input-sm" disabled>
+			    					</div>
+			    				</div>
+		  <div class="col-xs-6 col-sm-6 col-md-6 col-lg-12">
+			    					<div class="form-group">
+										<label> Fecha de salida</label>
+			    						<input value="{{ datosReserva.id_reserva.reserva_fecha_final|date:'d/m/Y' }}" type="text"  align="center" class="form-control input-sm" disabled>
+			    					</div>
+			    				</div>
+		  <div class="col-xs-6 col-sm-6 col-md-6 col-lg-12">
+			    					<div class="form-group">
+										<label>Costo por noche </label>
+			    						<input id="costoNoche" value="{{ datosReserva.residencia_costo_noche }}" type="text" align="center" class="form-control input-sm" disabled>
+			    					</div>
+			    				</div>
+		  <div class="col-xs-6 col-sm-6 col-md-6 col-lg-12">
+			    					<div class="form-group">
+										<label> Costo total de dias</label>
+			    						<input id="costoDiasTotal" value="" type="text" align="center" class="form-control input-sm" disabled>
+			    					</div>
+			    				</div>
+		  <div class="col-xs-6 col-sm-6 col-md-6 col-lg-12">
+			    					<div class="form-group">
+										<label> I.V.A</label>
+			    						<input value="16%" type="text" align="center" class="form-control input-sm" disabled>
+			    					</div>
+			    				</div>
+										<div class="col-xs-6 col-sm-6 col-md-6 col-lg-12">
+			    					<div class="form-group">
+										<label> Descuento </label>
+			    						<input id="descuento2" value="{{ datosReserva.id_descuento.descuento_porcentaje }}" type="text" align="center" class="form-control input-sm" disabled>
+			    					</div>
+			    				</div>
+										<div class="col-xs-6 col-sm-6 col-md-6 col-lg-12">
+			    					<div class="form-group">
+										<label> Total</label>
+			    						<input id="total2" value="{{ datosReserva.id_reserva.reserva_total_pago }}" type="text" align="center" class="form-control input-sm" disabled>
+			    					</div>
+			    				</div>
+			    				{% endfor %}
+									</div>
+			    				
+			    				
+			    				</div>	
+		  </td>
+    </tr>
+    <tr>
+      <form role="form">
+			    			<div class="row">
+</td>
+    </tr>
+    <tr> </tr>
+<tr>
+	    <td>
+				  <div class="row">
+			    				
+			    				<div class="col-xs-6 col-sm-6 col-md-6">
+			    					<div class="form-group">
+			               <input id="cancelarReserva" style="background: #54452" type="button" value="Cancelar" class="btn btn-info btn-block">
+			    					</div>
+			    				</div>
+			    				
+			    				<div class="col-xs-6 col-sm-6 col-md-6">
+			    					<div  class="form-group">
+		    						  <input id="pagarReserva" style="background: #D85B5D" type="button" value="Pagar" class="btn btn-info btn-block">
+										
+			    					</div>
+			    				</div>
+
+	</div>
+				  </td>
+			  </tr>
+			  
+    
+  </tbody>
+</table>
+
+        
+    </div>
+{% endblock %}

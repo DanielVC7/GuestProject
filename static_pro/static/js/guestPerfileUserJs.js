@@ -42,7 +42,7 @@ $( document ).ready(function(){
       foto += '<img src="/media/'+data.data[i].fields.detalles_usuario_foto+'" alt=""/>';
       foto += '<div class="file btn btn-lg btn-primary">';
       foto += 'Change Photo';
-      foto += '<input type="file" name="'+data.data[i].pk+'" id="perfileFoto"/>';
+      foto += '<input height="180px" width="180px" type="file" name="'+data.data[i].pk+'" id="perfileFoto"/>';
       foto += '</div>';
       $('#pictureUser').append(foto);
     };

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect,get_object_or_404
 from django.db.models import Q
 from django.http import HttpResponse
 import json
+import datetime
 import smtplib, getpass
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -31,9 +32,9 @@ def createUser(request):
 	return render(request,"Guest_formularios/register_users.html",context)
 
 def catalogo(request):
+	Guest_residencias.objects.filter(id_usuario_residencia=request.user.id,id_estatus__estatus_nombre="Proceso").delete()
+	Guest_adjunto.objects.filter(id_residencias__id_tipo_residencia=None).delete()
 	filtroCasasFotos = Guest_adjunto.objects.filter(archivo_adjunto_portada=True)
-	for catalogo in filtroCasasFotos:
-		print(catalogo.id_residencias)
 
 	context ={
 		'casas':filtroCasasFotos,
@@ -44,6 +45,8 @@ def ayuda(request):
 	return render(request,"Guest_formularios/ayuda.html",{})
 
 def buscar(request):
+	Guest_residencias.objects.filter(id_usuario_residencia=request.user.id,id_estatus__estatus_nombre="Proceso").delete()
+	Guest_adjunto.objects.filter(id_residencias__id_tipo_residencia=None).delete()
 	return render(request,"Guest_formularios/buscar.html",{}) 
 
 def home(request,pk=None):
@@ -109,8 +112,12 @@ def editHome(request,pk=None):
 def perfileUser(request,pk=None):
 	#Se obtiene en una instancia todo los datos del formulario
 	pictureUser = ""
+	idFoto = ""
 	instance = get_object_or_404(User, pk=pk)
+	
 	Guest_residencias.objects.filter(id_usuario_residencia=instance.id,id_estatus__estatus_nombre="Proceso").delete()
+	Guest_adjunto.objects.filter(id_residencias__id_tipo_residencia=None).delete()
+
 	mostrarDatos = User.objects.filter(id=instance.id)
 	for usurioDatos in mostrarDatos:
 		pass
@@ -158,6 +165,17 @@ def house(request,pk=None):
 	}
 	return render(request,"Guest_formularios/house.html",context)
 
+def reserva(request,pk=None):
+	instance = get_object_or_404(Guest_residencias ,pk=pk)
+	filtroRecidencias = Guest_residencias.objects.filter(id=instance.id)
+	filtroTarjetas = Guest_pagos.objects.filter(id_usuario=request.user.id)
+
+	context ={
+		'reservas': filtroRecidencias,
+		'tarjetas': filtroTarjetas,
+	}
+	return render(request,"Guest_formularios/reserva.html",context)
+
 def createCard(request):
 	form_pagos = guest_pagos(request.POST or None)
 	context = {
@@ -188,6 +206,58 @@ def createHouseAjax(request):
 			response_data['urlId'] = createHouse.id
 			response_data['respuesta'] = 1
 	return HttpResponse(json.dumps(response_data, ensure_ascii=False), content_type="application/json")
+
+@csrf_exempt
+def pagoAjax(request):
+	if request.method == 'POST' and request.is_ajax():
+		idRecindecia = request.POST.get('idRecindecia')
+		descuentoAplicar = request.POST.get('descuentoAplicar')
+		if int(descuentoAplicar) == 1:
+			costoTotalInstancia = request.POST.get('costoTotalInstancia')
+			codigoDescuento = request.POST.get('codigoDescuento')
+			idReserva = request.POST.get('idReserva')
+			filtroReserva = Guest_reserva.objects.filter(id=int(idReserva))
+			for reserva in filtroReserva:
+				pass 
+			filtroDescuento = Guest_descuento.objects.filter(descuento_codigo=codigoDescuento)
+			for  descuento in filtroDescuento:
+				pass
+			filtroResidencia = Guest_residencias.objects.filter(Q(id_descuento__descuento_codigo=codigoDescuento))
+			print(filtroResidencia)
+			if not filtroResidencia:
+				porcentaje = int(descuento.descuento_porcentaje)/100
+				totalIVA =  int(costoTotalInstancia)*.16
+				nuevoTotal = int(costoTotalInstancia)-((porcentaje)*int(costoTotalInstancia))
+				nuevoIVA = int(totalIVA)+int(nuevoTotal)
+				editarReserva = Guest_reserva(id=reserva,reserva_total_pago=nuevoIVA)
+				try:
+					editarReserva.save(update_fields=['reserva_total_pago'])
+				except Exception as e:
+					response_data = {}
+					response_data['mensaje'] = str(e)
+				else:
+					filtroResidencia = Guest_residencias.objects.filter(id=idRecindecia)
+					for recidencia in  filtroResidencia:
+						pass
+					descuentoActualizar = Guest_residencias(id=recidencia,id_descuento=descuento)
+					try:
+						response_data = {}
+						descuentoActualizar.save(update_fields=['id_descuento'])
+					except Exception as e:
+						response_data = {}
+						response_data['mensaje'] = str(e)
+					else:
+						response_data['respuesta'] = 1
+						response_data['data'] = json.loads(serializers.serialize('json', Guest_reserva.objects.filter(id=idReserva)))
+						response_data['descuento'] = json.loads(serializers.serialize('json', Guest_descuento.objects.filter(descuento_codigo=codigoDescuento)))
+			else:
+				response_data = {}
+				response_data['respuesta'] = 0
+				response_data['mensaje'] = "Ya tiene un descuento y no se le puede aplicar otro descuento";
+			
+
+	return HttpResponse(json.dumps(response_data, ensure_ascii=False), content_type="application/json")
+
 
 @csrf_exempt
 def pictureHouseAjax(request):
@@ -226,6 +296,22 @@ def pictureHouseAjax(request):
 				response_data['data'] = json.loads(serializers.serialize('json', Guest_adjunto.objects.filter(id_residencias=idResidencias)))
 				response_data['respuesta'] = 1
 	return HttpResponse(json.dumps(response_data, ensure_ascii=False), content_type="application/json")
+
+@csrf_exempt
+def cancelarPagoAjax(request):
+	if request.method == 'POST' and request.is_ajax():
+		idRecidencia = request.POST.get('idRecidencia')
+		filtroResidencias = Guest_residencias.objects.filter(id=idRecidencia)
+		print(filtroResidencias)
+		for recidencia in filtroResidencias:
+			pass
+
+		Guest_reserva.objects.filter(id=recidencia.id_reserva).delete()
+		response_data = {}
+		response_data['url'] = "/"
+
+	return HttpResponse(json.dumps(response_data, ensure_ascii=False), content_type="application/json")
+
 
 @csrf_exempt
 def editHouseAjax(request):
@@ -312,7 +398,6 @@ def editHouseAjax(request):
 			response_data['mensaje'] = str(e)
 		else:
 			if not idServicios:
-				print(tvaCable)
 				crearServicio = Guest_servicios(id_recidencia=idRecidencia,servicios_num_cuartos=numDormitorios,servicios_num_camas=numCamas,
 					servicios_num_banos=numBanos,servicios_tv_cable=tvaCable,servicios_alberca=alberca,servicios_internet=internet,
 					servicios_jacuzzi=jacuzzi,servicios_otros=otro,servicios_otros_servicios=otroDescripcion)
@@ -351,15 +436,51 @@ def editHouseAjax(request):
 
 @csrf_exempt
 def reservaCasaAjax(request):
-	if request.method == 'POST' and request.is_ajax():
-		pass
-	return HttpResponse('')
+	if not request.user.is_authenticated:
+		response_data = {}
+		response_data['mensaje'] = "Debe iniciar sesion para poder reservar."
+		response_data['respuesta'] = 0
+		return HttpResponse(json.dumps(response_data, ensure_ascii=False), content_type="application/json")
+	else:
+		if request.method == 'POST' and request.is_ajax():
+			user = get_object_or_404(User, pk=request.user.id)
+			fechaEntrada = request.POST.get('fechaEntrada')
+			fechaSalida = request.POST.get('fechaSalida')
+			numHuespedes = request.POST.get('numHuespedes')
+			telefono = request.POST.get('telefono')
+			dias = request.POST.get('dias')
+			total = request.POST.get('total')
+			idHouse = request.POST.get('idHouse')
+			crearReserva = Guest_reserva(id_usuario=user,reserva_fecha_inicio=fechaEntrada,reserva_fecha_final=fechaSalida,
+				reserva_dias=int(dias),reserva_num_huespedes=int(numHuespedes),reserva_total_pago=int(total),
+				reserva_telefono=telefono)
+			try:
+					response_data = {}
+					crearReserva.save()			
+			except Exception as e:
+				response_data = {}
+				response_data['mensaje'] = str(e)
+			else:
+				reservaCasa = Guest_residencias(id=idHouse,id_reserva=crearReserva)
+				try:
+					response_data = {}
+					reservaCasa.save(update_fields=['id_reserva'])			
+				except Exception as e:
+					response_data = {}
+					response_data['mensaje'] = str(e)
+				else:
+					response_data['respuesta'] = 1
+					response_data['mensaje'] = "Se procedera al pago."
+					response_data['url'] = "/guest/reserva/"+str(idHouse)+"/"
+
+		return HttpResponse(json.dumps(response_data, ensure_ascii=False), content_type="application/json")
 
 @csrf_exempt
 def eliminarCasaAjax(request):
 	if request.method == 'POST' and request.is_ajax():
 		idCasa = request.POST.get('idCasa')
 		idUser = request.POST.get('idUser')
+		Guest_adjunto.objects.filter(id_residencias=idCasa).delete()
 		Guest_residencias.objects.filter(id=idCasa).delete()
 		response_data = {}
 		response_data['data'] = json.loads(serializers.serialize('json', Guest_residencias.objects.filter(id_usuario_residencia=idUser)))
@@ -426,17 +547,11 @@ def loginUserAjax(request):
 def createUserAjax(request):
 	if request.method == 'POST' and request.is_ajax():
 		nombre = request.POST.get('nombre')
-		print(nombre)
 		apellidos = request.POST.get('apellidos')
-		print(apellidos)
 		username = request.POST.get('username')
-		print(username)
 		correo = request.POST.get('correo')
-		print(correo)
 		password = request.POST.get('password')
-		print(password)
 		password_confirmation = request.POST.get('password_confirmation')
-		print(password_confirmation)
 		numTarjeta = request.POST.get('numTarjeta')
 		month = request.POST.get('month')
 		year = request.POST.get('year')
@@ -524,7 +639,6 @@ def recoveryUserAjax(request):
 		if userRecovery:
 			passwordFilter = passwordRecovery.objects.filter(username=int(userRecovery.id))
 			for userPassword in passwordFilter:
-				print(userPassword.passwordRecoveryUser)
 				pass
 			userRecovery.check_password(userRecovery.password)
 			user = "guestincproject@gmail.com"

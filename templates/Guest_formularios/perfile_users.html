@@ -15,14 +15,14 @@
                     <div class="col-md-4">
                         <div class="profile-img" id="pictureUser">
                           {% if ifPicture == 0 %}
-                            <img src="{% static 'images/avatar-male.jpg' %}" alt=""/>
+                            <img height="180px" width="180px" src="{% static 'images/avatar-male.jpg' %}" alt=""/>
                             <div class="file btn btn-lg btn-primary">
                                 Change Photo
                                 <input type="file" name="" id="perfileFoto"/>
                             </div>
                           {% else %}
                             {% for picturePerfile in picture%}
-                              <img src="/media/{{ picturePerfile.detalles_usuario_foto }}" alt=""/>
+                              <img height="180px" width="180px" src="/media/{{ picturePerfile.detalles_usuario_foto }}" alt=""/>
                               <div class="file btn btn-lg btn-primary">
                               Change Photo
                               <input type="file" name="{{ picturePerfile.id }}" id="perfileFoto"/>
